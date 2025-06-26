@@ -15,29 +15,28 @@ cfg_if! {
         use crate::infrastructure::errors::web_errors::WebError;
         use crate::application::errors::user_service_errors::UserServiceError;
 
-        pub fn auth_routes<T>(app_state: AppState<T>) -> Router
+        pub fn auth_routes<T>(app_state: Arc<AppState<T>>) -> Router
         where
-            T: UserService + Clone + Send + Sync + 'static,
+            T: for<'a> UserService<'a> + Clone + Send + Sync + 'static,
          {
             Router::new()
                 .route("/register", post(register_handler))
                 .route("/login", post(login_handler))
                 .route("/refresh", post(refresh_token_handler::<T>))
-                .with_state(Arc::new(app_state))
+                .with_state(app_state)
         }
         async fn register_handler<T>(
             State(state): State<Arc<AppState<T>>>,
             Json(request): Json<CreateUserRequest>,
         ) -> Result<Json<AuthResponse>, StatusCode>
         where
-            T: UserService + Clone + Send + Sync + 'static,
+            T: for<'a> UserService<'a> + Clone + Send + Sync + 'static,
         {
-            let secret = state.app_config().auth.jwt_secret.clone();
 
             // Your service should return Result<AuthResponse, Error>, not Result<Json<AuthResponse>, Error>
             let auth_response: Json<AuthResponse> = state
                 .user_service()
-                .register_user(request, secret)
+                .register_user(request, &state.app_config().auth.jwt_secret)
                 .await
                 .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
@@ -49,13 +48,12 @@ cfg_if! {
             Json(request): Json<LoginRequest>,
         ) -> Result<Json<AuthResponse>, StatusCode>
         where
-            T: UserService + Clone + Send + Sync + 'static,
+            T: for<'a> UserService<'a> + Clone + Send + Sync + 'static,
 
          {
-            let secret = state.app_config().auth.jwt_secret.clone();
             let result = state
                 .user_service()
-                .authenticate_user(&request.email, &request.password, secret)
+                .authenticate_user(&request.email, &request.password, &state.app_config().auth.jwt_secret)
                 .await
                 .map_err(|_| StatusCode::UNAUTHORIZED)?;
             Ok(result)
@@ -66,13 +64,12 @@ cfg_if! {
             Json(request): Json<RefreshTokenRequest>,
         ) -> Result<Json<RefreshTokenResponse>, WebError>
         where
-            T: UserService + Clone + Send + Sync + 'static,
+            T: for<'a> UserService<'a> + Clone + Send + Sync + 'static,
         {
-            let secret = state.app_config().auth.jwt_secret.clone();
 
             let token_pair = AuthService::refresh_access_token(
                 &request.refresh_token,
-                &secret,
+                &state.app_config().auth.jwt_secret,
                 state.user_service(),
             )
             .await

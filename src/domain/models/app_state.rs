@@ -5,12 +5,12 @@ cfg_if! {
         use crate::application::user_service::UserService;
         use crate::infrastructure::config::app_config::AppConfig;
 
-        pub struct AppState<T: UserService + Send + Sync + 'static> {
+        pub struct AppState<T: for<'a> UserService<'a> + Send + Sync + 'static> {
             user_service: T,
             app_config: AppConfig,
         }
 
-        impl<T: UserService + Send + Sync> AppState<T> {
+        impl<T: for<'a> UserService<'a> + Send + Sync + 'static> AppState<T> {
             pub fn new(user_service: T, app_config: AppConfig) -> Self {
                 Self {
                     user_service,
@@ -26,7 +26,7 @@ cfg_if! {
                 &self.app_config
             }
         }
-        impl<T: UserService + Clone + Send + Sync> Clone for AppState<T> {
+        impl<T: for<'a> UserService<'a> + Clone + Send + Sync> Clone for AppState<T> {
             fn clone(&self) -> Self {
                 Self {
                     user_service: self.user_service.clone(),

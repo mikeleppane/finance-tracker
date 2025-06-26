@@ -47,6 +47,20 @@ impl Email {
     }
 }
 
+impl AsRef<str> for Email {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl std::ops::Deref for Email {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum EmailError {
     #[error("Email cannot be empty")]

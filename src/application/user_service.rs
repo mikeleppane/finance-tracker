@@ -20,9 +20,9 @@ cfg_if! {
 
 
         #[async_trait]
-        pub trait UserService: UserRepository + Send + Sync + 'static {
-            async fn register_user(&self, user: CreateUserRequest, secret: String) -> Result<Json<AuthResponse>, UserServiceError>;
-            async fn authenticate_user(&self, email: &str, password: &str, secret: String) -> Result<Json<AuthResponse>, UserServiceError>;
+        pub trait UserService<'a>: UserRepository + Send + Sync + 'static {
+            async fn register_user(&self, user: CreateUserRequest, secret: &str) -> Result<Json<AuthResponse>, UserServiceError>;
+            async fn authenticate_user(&self, email: &str, password: &str, secret: &str) -> Result<Json<AuthResponse>, UserServiceError>;
         }
         pub struct UserServiceImpl {
             user_repository: Arc<CosmosDbUserRepository>,
@@ -35,8 +35,8 @@ cfg_if! {
         }
 
         #[async_trait]
-        impl UserService for UserServiceImpl {
-            async fn register_user(&self, user: CreateUserRequest, secret: String) -> Result<Json<AuthResponse>, UserServiceError> {
+        impl UserService<'_> for UserServiceImpl {
+            async fn register_user(&self, user: CreateUserRequest, secret: &str) -> Result<Json<AuthResponse>, UserServiceError> {
 
                 logging::log!("Registering user: {}", user.email);
 
@@ -78,7 +78,7 @@ cfg_if! {
 
                 logging::log!("User registered successfully: {}", user.email().as_str());
 
-                        let token_pair = AuthService::generate_token_pair(&user, &secret)
+                        let token_pair = AuthService::generate_token_pair(&user, secret)
                     .map_err(|e| UserServiceError::AuthServiceError {
                         source: Box::new(e),
                     })?;
@@ -99,7 +99,7 @@ cfg_if! {
                 }))
             }
 
-            async fn authenticate_user(&self, email: &str, password: &str, secret: String) -> Result<Json<AuthResponse>, UserServiceError> {
+            async fn authenticate_user(&self, email: &str, password: &str, secret: &str) -> Result<Json<AuthResponse>, UserServiceError> {
                 // Find user by email
 
                 logging::log!("Authenticating user: {}", email);
@@ -126,7 +126,7 @@ cfg_if! {
 
                 logging::log!("User authenticated successfully: {}", user.email().as_str());
 
-                let token_pair = AuthService::generate_token_pair(&user, &secret)
+                let token_pair = AuthService::generate_token_pair(&user, secret)
                     .map_err(|e| UserServiceError::AuthServiceError {
                         source: Box::new(e),
                     })?;

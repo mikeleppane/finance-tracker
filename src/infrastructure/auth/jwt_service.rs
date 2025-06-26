@@ -1,5 +1,5 @@
 #[cfg(feature = "ssr")]
-use crate::domain::models::user::User;
+use crate::{application::user_service::UserService, domain::models::user::User};
 #[cfg(feature = "ssr")]
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 #[cfg(feature = "ssr")]
@@ -154,7 +154,7 @@ impl AuthService {
         user_service: &T,
     ) -> Result<TokenPair, AuthError>
     where
-        T: crate::application::user_service::UserService,
+        T: for<'a> UserService<'a>,
     {
         // Verify the refresh token
         let claims = Self::verify_token(refresh_token, secret)?;

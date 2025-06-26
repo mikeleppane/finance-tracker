@@ -42,7 +42,7 @@ pub enum UserServiceError {
     ServiceUnavailable,
 
     #[error("Internal server error: {message}")]
-    InternalError { message: String },
+    InternalError { message: &'static str },
 }
 
 impl UserServiceError {
