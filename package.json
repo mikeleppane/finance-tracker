@@ -1,0 +1,13 @@
+{
+    "name": "leptos-tailwind-project",
+    "version": "1.0.0",
+    "scripts": {
+        "css:build": "npx tailwindcss-cli@latest -i ./style/input.css -o ./style/output.css",
+        "css:watch": "npx tailwindcss-cli@latest -i ./style/input.css -o ./style/output.css --watch"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/typography": "^0.5.16",
+        "tailwindcss": "^4.1.10"
+    }
+}
