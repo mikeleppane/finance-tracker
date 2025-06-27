@@ -1,4 +1,6 @@
-use crate::components::login::AuthPage;
+//use crate::components::login::AuthPage;
+//use crate::components::login::AuthPage;
+use crate::components::ws_connection_status::ConnectionStatus;
 use leptos::prelude::*;
 use leptos_meta::{Meta, MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::components::{Route, Router, Routes};
@@ -38,33 +40,33 @@ pub fn App() -> impl IntoView {
         <Router>
             <main class="min-h-screen bg-gray-50">
                 <Routes fallback=|| "Page not found".into_view()>
-                    <Route path=path!("/") view=AuthPage />
-                    <Route path=path!("/login") view=AuthPage />
-                    <Route path=path!("/dashboard") view=Dashboard />
+                    <Route path=path!("/") view=HomePage />
+                    <Route path=path!("/connection") view=ConnectionStatus />
                 </Routes>
             </main>
         </Router>
     }
 }
 
-/// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
     view! {
         <div class="container mx-auto px-4 py-8">
-            <div class="card max-w-2xl mx-auto">
-                <div class="card-header">
-                    <h1 class="text-2xl font-bold text-gray-900">
-                        "Welcome to Leptos with TailwindCSS"
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                        "Welcome to Test WebSocket Connection"
                     </h1>
-                </div>
-                <div class="card-content">
-                    <p class="text-gray-600 mb-4">
-                        "This is a sample page using TailwindCSS classes."
+                    <p class="text-gray-600 mb-6">
+                        "This page allows you to test the WebSocket connection to the server. Click the button below to initiate a connection and see the status updates in real-time."
                     </p>
-                    <div class="space-x-2">
-                        <button class="btn btn-primary">"Primary Button"</button>
-                        <button class="btn btn-secondary">"Secondary Button"</button>
+                    <div class="space-x-4">
+                        <a
+                            href="/connection"
+                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+                        >
+                            "Test WebSocket Connection"
+                        </a>
                     </div>
                 </div>
             </div>

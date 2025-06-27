@@ -42,10 +42,17 @@ async-trait = "0.1.88"
 regex = "1.11.1"
 thiserror = "2.0.12"
 futures-util = "0.3.31"
-
+gloo-timers = { version = "0.3", optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
 
 [features]
-hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen"]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+    "dep:gloo-timers",
+    "dep:wasm-bindgen-futures",
+]
 ssr = [
     "dep:axum",
     "dep:tokio",
