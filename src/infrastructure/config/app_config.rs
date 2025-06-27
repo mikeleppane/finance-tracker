@@ -1,4 +1,4 @@
-use color_eyre::{eyre::WrapErr, Result};
+use color_eyre::{Result, eyre::WrapErr};
 use dotenvy;
 use leptos::logging::log;
 use serde::{Deserialize, Serialize};
@@ -178,8 +178,11 @@ pub fn get_config() -> &'static AppConfig {
     match APP_CONFIG.as_ref() {
         Ok(config) => config,
         Err(e) => {
-            panic!("{}", format!(
-                "Failed to load application configuration. Please ensure all required environment variables are set. Error:\n{e}")
+            panic!(
+                "{}",
+                format!(
+                    "Failed to load application configuration. Please ensure all required environment variables are set. Error:\n{e}"
+                )
             );
         }
     }

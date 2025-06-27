@@ -6,7 +6,7 @@ use color_eyre::Result;
 #[cfg(feature = "ssr")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use axum::Router;
-    use finance_tracker::app::{shell, App};
+    use finance_tracker::app::{App, shell};
     use finance_tracker::application::user_service::UserServiceImpl;
     use finance_tracker::domain::models::app_state::AppState;
     use finance_tracker::infrastructure::config::app_config::get_config;
@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use leptos::logging::log;
     use leptos::prelude::*;
     use leptos_axum;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
+    use leptos_axum::{LeptosRoutes, generate_route_list};
     use std::sync::Arc;
     use tokio;
 

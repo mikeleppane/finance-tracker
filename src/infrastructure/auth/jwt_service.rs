@@ -1,7 +1,7 @@
 #[cfg(feature = "ssr")]
 use crate::{application::user_service::UserService, domain::models::user::User};
 #[cfg(feature = "ssr")]
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 #[cfg(feature = "ssr")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "ssr")]

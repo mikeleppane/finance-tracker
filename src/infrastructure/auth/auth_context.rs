@@ -117,7 +117,7 @@ impl AuthState {
                 .json(&serde_json::json!({ "refresh_token": refresh_token }))
             {
                 response.json::<serde_json::Value>().await.ok(); // Handle response if needed
-                                                                 // Successfully logged out
+            // Successfully logged out
             } else {
                 // Handle error if needed
             }
