@@ -1,11 +1,8 @@
-//use crate::components::login::AuthPage;
-//use crate::components::login::AuthPage;
-use crate::components::ws_connection_status::ConnectionStatus;
+use crate::components::login::AuthPage;
 use leptos::prelude::*;
 use leptos_meta::{Meta, MetaTags, Stylesheet, Title, provide_meta_context};
 use leptos_router::components::{Route, Router, Routes};
 use leptos_router::path;
-
 #[must_use]
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -40,8 +37,9 @@ pub fn App() -> impl IntoView {
         <Router>
             <main class="min-h-screen bg-gray-50">
                 <Routes fallback=|| "Page not found".into_view()>
-                    <Route path=path!("/") view=HomePage />
-                    <Route path=path!("/connection") view=ConnectionStatus />
+                    <Route path=path!("/") view=AuthPage />
+                    <Route path=path!("/login") view=AuthPage />
+                    <Route path=path!("/dashboard") view=Dashboard />
                 </Routes>
             </main>
         </Router>
@@ -191,7 +189,7 @@ fn DashboardContent() -> impl IntoView {
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-2xl font-bold mb-2">"Welcome back, John!"</h2>
+                        <h2 class="text-2xl font-bold mb-2">"Welcome back!"</h2>
                         <p class="text-blue-100">"Here's your financial overview for today"</p>
                     </div>
                     <div class="hidden md:block">

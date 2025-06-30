@@ -4,18 +4,17 @@ use color_eyre::Result;
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    use axum;
     use axum::Router;
     use axum::routing::get;
     use finance_tracker::app::{App, shell};
-    //use finance_tracker::application::user_service::UserServiceImpl;
-    //use finance_tracker::domain::models::app_state::AppState;
-    //use finance_tracker::infrastructure::config::app_config::get_config;
-    //use finance_tracker::infrastructure::persistence::user_repository_cosmosdb::CosmosDbUserRepository;
-    //use finance_tracker::services::repository::client::CosmosClientManager;
-    use axum;
-    //use finance_tracker::infrastructure::web::routing::app_router::create_api_router;
+    use finance_tracker::application::user_service::UserServiceImpl;
+    use finance_tracker::domain::models::app_state::AppState;
+    use finance_tracker::infrastructure::config::app_config::get_config;
+    use finance_tracker::infrastructure::persistence::user_repository_cosmosdb::CosmosDbUserRepository;
+    use finance_tracker::infrastructure::web::routing::app_router::create_api_router;
     use finance_tracker::infrastructure::web::websocket::{ConnectionManager, websocket_handler};
-    use leptos::logging::log;
+    use leptos::logging;
     use leptos::prelude::*;
     use leptos_axum;
     use leptos_axum::{LeptosRoutes, generate_route_list};
@@ -39,8 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         start_heartbeat_service(heartbeat_connection_manager).await;
     });
 
-    // Load application configuration (this handles environment detection and .env loading)
-    /* let app_config = get_config();
+    let app_config = get_config();
 
     let user_repo = CosmosDbUserRepository::new(
         app_config.cosmos.database_name.clone(),
@@ -57,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app_state = AppState::new(user_service, app_config.clone());
 
-    let _api_router = create_api_router(app_state); */
+    let api_router = create_api_router(app_state);
 
     let ws_router = Router::new()
         .route("/ws", get(websocket_handler))
@@ -70,10 +68,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
         .fallback(leptos_axum::file_and_error_handler(shell))
         .with_state(leptos_options)
+        .merge(Router::new().nest("/api", api_router))
         .merge(ws_router);
     // run our app with hyper
     // `axum::Server` is a re-export of `hyper::Server`
-    log!(" listening on http://{}", &addr);
+    logging::log!(" listening on http://{}", &addr);
     let listener = tokio::net::TcpListener::bind(&addr)
         .await
         .expect("Failed to bind TCP listener");
